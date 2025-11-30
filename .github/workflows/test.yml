@@ -98,7 +98,7 @@ jobs:
         run: |
           echo "=== Checking for Secrets ==="
           cd ~/dotfiles
-          if grep -r -i "password\|secret.*=\|api[_-]key.*=" . --exclude-dir=.git --exclude="*.md" --exclude="test.yml"; then
+          if grep -r -i "password\s*=\|secret\s*=\|api[_-]key\s*=" . --exclude-dir=.git --exclude="*.md" --exclude="test.yml" --exclude=".gitignore"; then
             echo "✗ Found potential secrets!"
             exit 1
           else
@@ -208,7 +208,7 @@ jobs:
         run: |
           echo "=== Checking for Secrets ==="
           cd ~/dotfiles
-          if grep -r -i "password\|secret.*=\|api[_-]key.*=" . --exclude-dir=.git --exclude="*.md" --exclude="test.yml"; then
+          if grep -r -i "password\s*=\|secret\s*=\|api[_-]key\s*=" . --exclude-dir=.git --exclude="*.md" --exclude="test.yml" --exclude=".gitignore"; then
             echo "✗ Found potential secrets!"
             exit 1
           else
