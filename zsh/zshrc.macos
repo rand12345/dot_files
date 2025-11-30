@@ -1,0 +1,102 @@
+# macOS-Specific ZSH Configuration
+
+# ============================================================================
+# Homebrew
+# ============================================================================
+
+# Homebrew paths (Intel vs Apple Silicon)
+if [[ -d "/opt/homebrew" ]]; then
+    # Apple Silicon
+    eval "$(/opt/homebrew/bin/brew shellenv)"
+elif [[ -d "/usr/local/Homebrew" ]]; then
+    # Intel
+    export PATH="/usr/local/bin:$PATH"
+fi
+
+# ============================================================================
+# macOS-Specific Plugins
+# ============================================================================
+
+# Add macOS-specific plugins to the existing plugins array
+plugins+=(
+    macos
+    brew
+    docker
+)
+
+# ============================================================================
+# macOS-Specific Aliases
+# ============================================================================
+
+# Flush DNS cache
+alias flushdns='sudo dscacheutil -flushcache; sudo killall -HUP mDNSResponder'
+
+# Show/hide hidden files in Finder
+alias showfiles='defaults write com.apple.finder AppleShowAllFiles YES; killall Finder'
+alias hidefiles='defaults write com.apple.finder AppleShowAllFiles NO; killall Finder'
+
+# Lock screen
+alias lock='/System/Library/CoreServices/Menu\ Extras/User.menu/Contents/Resources/CGSession -suspend'
+
+# Update system
+alias brewup='brew update && brew upgrade && brew cleanup'
+
+# Quick Look
+alias ql='qlmanage -p'
+
+# ============================================================================
+# macOS-Specific Environment Variables
+# ============================================================================
+
+# Set TERM for better color support
+export TERM="xterm-256color"
+
+# ============================================================================
+# macOS-Specific Path Additions
+# ============================================================================
+
+# Add common macOS binary locations
+export PATH="/usr/local/sbin:$PATH"
+export PATH="$HOME/.local/bin:$PATH"
+
+# OpenSSL (if installed via Homebrew)
+if [[ -d "/opt/homebrew/opt/openssl@3/bin" ]]; then
+    export PATH="/opt/homebrew/opt/openssl@3/bin:$PATH"
+elif [[ -d "/usr/local/opt/openssl@1.1/bin" ]]; then
+    export PATH="/usr/local/opt/openssl@1.1/bin:$PATH"
+fi
+
+# ============================================================================
+# Optional: Atuin (shell history)
+# ============================================================================
+
+# if command -v atuin &> /dev/null; then
+#     eval "$(atuin init zsh)"
+# fi
+
+# ============================================================================
+# Optional: Machine-Specific Paths
+# ============================================================================
+
+# Examples - uncomment and customize as needed:
+
+# STM32CubeProgrammer
+# export STM32_PRG_PATH=/Applications/STMicroelectronics/STM32Cube/STM32CubeProgrammer/STM32CubeProgrammer.app/Contents/MacOs/bin
+# export PATH="/Applications/STMicroelectronics/STM32Cube/STM32CubeProgrammer/STM32CubeProgrammer.app/Contents/MacOs/bin:$PATH"
+
+# PlatformIO
+# if [ -f "$HOME/.platformio/.cache/env" ]; then
+#     . "$HOME/.platformio/.cache/env"
+# fi
+
+# ESP-IDF
+# alias get_idf='. $HOME/esp/esp-idf/export.sh'
+
+# Python versions
+# export PATH="/opt/homebrew/opt/python@3.10/bin:$PATH"
+# alias python="/opt/homebrew/opt/python@3.10/bin/python3"
+
+# Anaconda/Miniconda
+# export PATH="$HOME/anaconda3/bin:$PATH"
+# or
+# export PATH="$HOME/miniconda3/bin:$PATH"

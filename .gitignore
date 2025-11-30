@@ -1,0 +1,28 @@
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Vim
+*.swp
+*.swo
+*~
+
+# Local machine-specific files (not to be shared)
+*.local
+*.backup.*
+
+# Secrets and credentials
+*secret*
+*password*
+*credential*
+.env
+.env.*
+
+# Neovim plugin data
+nvim/config/plugin/
+nvim/config/lazy-lock.json

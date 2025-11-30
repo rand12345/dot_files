@@ -1,0 +1,105 @@
+# Linux-Specific ZSH Configuration (Kali and other Debian-based distros)
+
+# ============================================================================
+# Linux-Specific Plugins
+# ============================================================================
+
+# Add Linux-specific plugins
+plugins+=(
+    debian
+    systemd
+    nmap
+)
+
+# ============================================================================
+# Kali Linux Specific
+# ============================================================================
+
+# Detect if running on Kali
+if grep -qi "kali" /etc/os-release 2>/dev/null; then
+    export IS_KALI=true
+
+    # Kali-specific aliases
+    alias update='sudo apt update && sudo apt upgrade -y'
+    alias install='sudo apt install'
+    alias remove='sudo apt remove'
+    alias search='apt search'
+
+    # Common Kali tools aliases
+    alias nse='ls /usr/share/nmap/scripts | grep'
+    alias metasploit='msfconsole'
+    alias burp='java -jar /usr/bin/burpsuite &'
+fi
+
+# ============================================================================
+# Linux-Specific Aliases
+# ============================================================================
+
+# Package management (general Debian-based)
+alias update='sudo apt update && sudo apt upgrade'
+alias install='sudo apt install'
+alias remove='sudo apt remove'
+
+# System information
+alias ports='netstat -tulanp'
+alias meminfo='free -m -l -t'
+alias cpuinfo='lscpu'
+
+# Service management
+alias sstart='sudo systemctl start'
+alias sstop='sudo systemctl stop'
+alias srestart='sudo systemctl restart'
+alias sstatus='sudo systemctl status'
+
+# Network
+alias myip='curl ifconfig.me'
+alias openports='sudo netstat -tulpn | grep LISTEN'
+
+# ============================================================================
+# Linux-Specific Environment Variables
+# ============================================================================
+
+# Set TERM for better color support
+export TERM="xterm-256color"
+
+# ============================================================================
+# Linux-Specific Path Additions
+# ============================================================================
+
+# Add common Linux binary locations
+export PATH="/usr/local/bin:$PATH"
+export PATH="$HOME/.local/bin:$PATH"
+
+# ============================================================================
+# Linux-Specific Tools
+# ============================================================================
+
+# Enable color support for common commands
+if [ -x /usr/bin/dircolors ]; then
+    test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
+    alias ls='ls --color=auto'
+    alias grep='grep --color=auto'
+    alias fgrep='fgrep --color=auto'
+    alias egrep='egrep --color=auto'
+fi
+
+# ============================================================================
+# Optional: Machine-Specific Configuration
+# ============================================================================
+
+# Add any machine-specific paths or configurations here
+# These are just examples - customize as needed
+
+# Python virtual environments
+# if [ -f "$HOME/.local/bin/virtualenvwrapper.sh" ]; then
+#     export WORKON_HOME=$HOME/.virtualenvs
+#     source $HOME/.local/bin/virtualenvwrapper.sh
+# fi
+
+# NVM (Node Version Manager)
+# export NVM_DIR="$HOME/.nvm"
+# [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+
+# Go
+# export GOPATH=$HOME/go
+# export PATH=$PATH:/usr/local/go/bin:$GOPATH/bin
