@@ -106,6 +106,12 @@ fi
 echo -e "\n${YELLOW}Installing Git configuration...${NC}"
 create_symlink "$DOTFILES_DIR/git/gitconfig" "$HOME/.gitconfig"
 
+# Install custom ZSH theme
+if [ -d "$HOME/.oh-my-zsh/custom/themes" ]; then
+    echo -e "\n${YELLOW}Installing custom ZSH theme...${NC}"
+    create_symlink "$DOTFILES_DIR/zsh/themes/custom.zsh-theme" "$HOME/.oh-my-zsh/custom/themes/custom.zsh-theme"
+fi
+
 # Install Rust if not present
 if ! command -v cargo &> /dev/null; then
     echo -e "\n${YELLOW}Installing Rust...${NC}"

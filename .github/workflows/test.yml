@@ -1,0 +1,282 @@
+name: Test Dotfiles Installation
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  test-macos:
+    name: Test on macOS
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout dotfiles
+        uses: actions/checkout@v4
+        with:
+          path: dotfiles
+
+      - name: Move dotfiles to home directory
+        run: |
+          mv dotfiles ~/dotfiles
+
+      - name: Display system information
+        run: |
+          echo "=== System Information ==="
+          uname -a
+          sw_vers || true
+          echo "Shell: $SHELL"
+          echo "Home: $HOME"
+
+      - name: Install Oh My Zsh
+        run: |
+          sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
+
+      - name: Run installation script
+        run: |
+          cd ~/dotfiles
+          chmod +x scripts/install.sh
+          # Skip interactive parts like chsh
+          bash scripts/install.sh || true
+
+      - name: Verify symlinks created
+        run: |
+          echo "=== Verifying Symlinks ==="
+
+          if [ -L "$HOME/.zshrc" ]; then
+            echo "✓ .zshrc symlink exists"
+            ls -la "$HOME/.zshrc"
+          else
+            echo "✗ .zshrc symlink missing"
+            exit 1
+          fi
+
+          if [ -L "$HOME/.tmux.conf" ]; then
+            echo "✓ .tmux.conf symlink exists"
+            ls -la "$HOME/.tmux.conf"
+          else
+            echo "✗ .tmux.conf symlink missing"
+            exit 1
+          fi
+
+          if [ -L "$HOME/.config/nvim" ]; then
+            echo "✓ nvim config symlink exists"
+            ls -la "$HOME/.config/nvim"
+          else
+            echo "✗ nvim config symlink missing"
+            exit 1
+          fi
+
+          if [ -L "$HOME/.gitconfig" ]; then
+            echo "✓ .gitconfig symlink exists"
+            ls -la "$HOME/.gitconfig"
+          else
+            echo "✗ .gitconfig symlink missing"
+            exit 1
+          fi
+
+      - name: Test ZSH configuration loads
+        run: |
+          echo "=== Testing ZSH Configuration ==="
+          export SHELL=/bin/zsh
+          /bin/zsh -c 'source ~/.zshrc && echo "✓ ZSH config loaded successfully"'
+
+      - name: Test platform detection
+        run: |
+          echo "=== Testing Platform Detection ==="
+          /bin/zsh -c 'source ~/.zshrc && echo "Detected OS: $DOTFILES_OS"'
+          /bin/zsh -c 'source ~/.zshrc && [[ "$DOTFILES_OS" == "macos" ]] && echo "✓ Correctly detected macOS" || exit 1'
+
+      - name: Test macOS-specific config loaded
+        run: |
+          echo "=== Testing macOS-Specific Config ==="
+          /bin/zsh -c 'source ~/.zshrc && alias | grep -q "flushdns" && echo "✓ macOS aliases loaded" || exit 1'
+
+      - name: Verify no secrets in configs
+        run: |
+          echo "=== Checking for Secrets ==="
+          cd ~/dotfiles
+          if grep -r -i "password\|secret.*=\|api[_-]key.*=" . --exclude-dir=.git --exclude="*.md" --exclude="test.yml"; then
+            echo "✗ Found potential secrets!"
+            exit 1
+          else
+            echo "✓ No secrets found"
+          fi
+
+      - name: Test Git config
+        run: |
+          echo "=== Testing Git Config ==="
+          git config --global user.name "Test User"
+          git config --global user.email "test@example.com"
+          git config --list | grep user.name
+          git config --list | grep user.email
+
+  test-debian:
+    name: Test on Debian/Ubuntu
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout dotfiles
+        uses: actions/checkout@v4
+        with:
+          path: dotfiles
+
+      - name: Move dotfiles to home directory
+        run: |
+          mv dotfiles ~/dotfiles
+
+      - name: Display system information
+        run: |
+          echo "=== System Information ==="
+          uname -a
+          lsb_release -a || cat /etc/os-release
+          echo "Shell: $SHELL"
+          echo "Home: $HOME"
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y zsh curl git
+
+      - name: Install Oh My Zsh
+        run: |
+          sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
+
+      - name: Run installation script
+        run: |
+          cd ~/dotfiles
+          chmod +x scripts/install.sh
+          # Skip interactive parts like chsh and package installation
+          bash scripts/install.sh || true
+
+      - name: Verify symlinks created
+        run: |
+          echo "=== Verifying Symlinks ==="
+
+          if [ -L "$HOME/.zshrc" ]; then
+            echo "✓ .zshrc symlink exists"
+            ls -la "$HOME/.zshrc"
+          else
+            echo "✗ .zshrc symlink missing"
+            exit 1
+          fi
+
+          if [ -L "$HOME/.tmux.conf" ]; then
+            echo "✓ .tmux.conf symlink exists"
+            ls -la "$HOME/.tmux.conf"
+          else
+            echo "✗ .tmux.conf symlink missing"
+            exit 1
+          fi
+
+          if [ -L "$HOME/.config/nvim" ]; then
+            echo "✓ nvim config symlink exists"
+            ls -la "$HOME/.config/nvim"
+          else
+            echo "✗ nvim config symlink missing"
+            exit 1
+          fi
+
+          if [ -L "$HOME/.gitconfig" ]; then
+            echo "✓ .gitconfig symlink exists"
+            ls -la "$HOME/.gitconfig"
+          else
+            echo "✗ .gitconfig symlink missing"
+            exit 1
+          fi
+
+      - name: Test ZSH configuration loads
+        run: |
+          echo "=== Testing ZSH Configuration ==="
+          export SHELL=/usr/bin/zsh
+          /usr/bin/zsh -c 'source ~/.zshrc && echo "✓ ZSH config loaded successfully"'
+
+      - name: Test platform detection
+        run: |
+          echo "=== Testing Platform Detection ==="
+          /usr/bin/zsh -c 'source ~/.zshrc && echo "Detected OS: $DOTFILES_OS"'
+          /usr/bin/zsh -c 'source ~/.zshrc && [[ "$DOTFILES_OS" == "linux" ]] && echo "✓ Correctly detected Linux" || exit 1'
+
+      - name: Test Linux-specific config loaded
+        run: |
+          echo "=== Testing Linux-Specific Config ==="
+          /usr/bin/zsh -c 'source ~/.zshrc && alias | grep -q "update=" && echo "✓ Linux aliases loaded" || exit 1'
+
+      - name: Verify no secrets in configs
+        run: |
+          echo "=== Checking for Secrets ==="
+          cd ~/dotfiles
+          if grep -r -i "password\|secret.*=\|api[_-]key.*=" . --exclude-dir=.git --exclude="*.md" --exclude="test.yml"; then
+            echo "✗ Found potential secrets!"
+            exit 1
+          else
+            echo "✓ No secrets found"
+          fi
+
+      - name: Test Git config
+        run: |
+          echo "=== Testing Git Config ==="
+          git config --global user.name "Test User"
+          git config --global user.email "test@example.com"
+          git config --list | grep user.name
+          git config --list | grep user.email
+
+      - name: Test Rust installation
+        run: |
+          echo "=== Testing Rust ==="
+          if command -v cargo &> /dev/null; then
+            echo "✓ Cargo installed"
+            cargo --version
+          else
+            echo "⚠ Cargo not installed (expected in CI)"
+          fi
+
+  test-syntax:
+    name: Test Script Syntax
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout dotfiles
+        uses: actions/checkout@v4
+
+      - name: Install shellcheck
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y shellcheck
+
+      - name: Check shell script syntax
+        run: |
+          echo "=== Checking Shell Scripts ==="
+          shellcheck scripts/*.sh || true
+
+          echo "=== Checking for Bash syntax errors ==="
+          bash -n scripts/install.sh
+          bash -n scripts/bootstrap.sh
+
+      - name: Verify file structure
+        run: |
+          echo "=== Verifying Repository Structure ==="
+
+          required_files=(
+            "README.md"
+            "LICENSE"
+            ".gitignore"
+            "zsh/zshrc"
+            "zsh/zshrc.macos"
+            "zsh/zshrc.linux"
+            "tmux/tmux.conf"
+            "git/gitconfig"
+            "scripts/install.sh"
+            "scripts/bootstrap.sh"
+          )
+
+          for file in "${required_files[@]}"; do
+            if [ -f "$file" ]; then
+              echo "✓ $file exists"
+            else
+              echo "✗ $file missing"
+              exit 1
+            fi
+          done

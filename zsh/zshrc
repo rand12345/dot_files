@@ -30,6 +30,28 @@ plugins=(
 source $ZSH/oh-my-zsh.sh
 
 # ============================================================================
+# Custom Prompt with Hostname
+# ============================================================================
+
+# Enable parameter expansion, command substitution and arithmetic expansion in prompts
+setopt PROMPT_SUBST
+
+# Custom prompt that includes hostname
+# Format: [user@hostname] directory (git_branch)
+# Colors: cyan for user@host, blue for directory, yellow for git
+PROMPT='%{$fg[cyan]%}[%n@%m]%{$reset_color%} %{$fg[blue]%}%~%{$reset_color%} $(git_prompt_info)
+%{$fg[green]%}➜%{$reset_color%} '
+
+# Right prompt with time (optional - comment out if not wanted)
+# RPROMPT='%{$fg[yellow]%}%T%{$reset_color%}'
+
+# Git prompt info (customize these if you want different git prompt styling)
+ZSH_THEME_GIT_PROMPT_PREFIX="%{$fg[yellow]%}("
+ZSH_THEME_GIT_PROMPT_SUFFIX=")%{$reset_color%}"
+ZSH_THEME_GIT_PROMPT_DIRTY=" %{$fg[red]%}✗%{$reset_color%}"
+ZSH_THEME_GIT_PROMPT_CLEAN=" %{$fg[green]%}✓%{$reset_color%}"
+
+# ============================================================================
 # User Configuration
 # ============================================================================
 
