@@ -112,21 +112,29 @@ if [ -d "$HOME/.oh-my-zsh/custom/themes" ]; then
     create_symlink "$DOTFILES_DIR/zsh/themes/custom.zsh-theme" "$HOME/.oh-my-zsh/custom/themes/custom.zsh-theme"
 fi
 
-# Install Rust if not present
-if ! command -v cargo &> /dev/null; then
-    echo -e "\n${YELLOW}Installing Rust...${NC}"
-    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
-    source "$HOME/.cargo/env"
-    echo -e "${GREEN}✓${NC} Rust installed"
+# Install Rust (opt-in via INSTALL_RUST=1)
+if [[ "${INSTALL_RUST:-0}" == "1" ]]; then
+    if ! command -v cargo &> /dev/null; then
+        echo -e "\n${YELLOW}Installing Rust...${NC}"
+        curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+        source "$HOME/.cargo/env"
+        echo -e "${GREEN}✓${NC} Rust installed"
+    else
+        echo -e "${GREEN}✓${NC} Rust already installed"
+    fi
 else
-    echo -e "${GREEN}✓${NC} Rust already installed"
+    echo -e "${GREEN}✓${NC} Skipping Rust (set INSTALL_RUST=1 to enable)"
 fi
 
 # Set ZSH as default shell
-if [ "$SHELL" != "$(which zsh)" ]; then
+ZSH_PATH="$(which zsh)"
+if [ "$SHELL" != "$ZSH_PATH" ]; then
     echo -e "\n${YELLOW}Setting ZSH as default shell...${NC}"
-    chsh -s "$(which zsh)"
-    echo -e "${GREEN}✓${NC} ZSH set as default shell"
+    if [[ "$OS" == "linux" ]] && command -v usermod &> /dev/null; then
+        sudo usermod -s "$ZSH_PATH" "$USER" && echo -e "${GREEN}✓${NC} ZSH set as default shell" || echo -e "${YELLOW}⚠${NC} Could not set default shell — run: chsh -s $ZSH_PATH"
+    else
+        chsh -s "$ZSH_PATH" && echo -e "${GREEN}✓${NC} ZSH set as default shell" || echo -e "${YELLOW}⚠${NC} Could not set default shell — run: chsh -s $ZSH_PATH"
+    fi
 fi
 
 # Final instructions
