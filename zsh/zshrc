@@ -26,6 +26,7 @@ plugins=(
     sudo
     tmux
     vim-interaction
+    fzf
 )
 
 # Load Oh My Zsh
