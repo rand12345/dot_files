@@ -24,6 +24,8 @@ DISABLE_UNTRACKED_FILES_DIRTY="true"
 plugins=(
     git
     sudo
+    tmux
+    vim-interaction
 )
 
 # Load Oh My Zsh
@@ -118,6 +120,27 @@ elif command -v ip &> /dev/null; then
     # Linux alternative
     LANIP=$(ip -4 addr | grep -oP '(?<=inet\s)\d+(\.\d+){3}' | grep -v '127.0.0.1' | tr '\n' ' ')
     echo "LAN IP: $LANIP"
+fi
+
+# ============================================================================
+# Terminal & Claude Code
+# ============================================================================
+
+# 24-bit colour support (required for Claude Code TUI and modern terminal apps)
+export COLORTERM=truecolor
+
+# History — larger size and deduplication improve Claude's shell-history context
+HISTSIZE=50000
+SAVEHIST=50000
+setopt SHARE_HISTORY        # sync history across all open sessions
+setopt HIST_IGNORE_DUPS     # skip consecutive duplicates
+setopt HIST_IGNORE_ALL_DUPS # remove older duplicate when a new one is added
+setopt HIST_IGNORE_SPACE    # space-prefixed commands are not saved (privacy)
+setopt HIST_REDUCE_BLANKS   # strip extra whitespace before saving
+
+# Claude Code shorthand
+if command -v claude &> /dev/null; then
+    alias cc='claude'
 fi
 
 # ============================================================================
