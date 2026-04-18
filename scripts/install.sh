@@ -102,6 +102,10 @@ if [ -d "$DOTFILES_DIR/nvim/config" ]; then
     create_symlink "$DOTFILES_DIR/nvim/config" "$HOME/.config/nvim"
 fi
 
+# Install Vim configuration
+echo -e "\n${YELLOW}Installing Vim configuration...${NC}"
+create_symlink "$DOTFILES_DIR/vim/vimrc" "$HOME/.vimrc"
+
 # Install Git configuration
 echo -e "\n${YELLOW}Installing Git configuration...${NC}"
 create_symlink "$DOTFILES_DIR/git/gitconfig" "$HOME/.gitconfig"
