@@ -1,0 +1,41 @@
+# Font
+font-family = "0xProto Nerd Font Mono"
+font-size = 13
+
+# Shell
+command = /bin/zsh
+
+# Window
+window-padding-x = 8
+window-padding-y = 8
+window-new-tab-position = end
+
+# Scrollback
+scrollback-limit = 10000
+
+# Cursor: vertical bar, no blink
+cursor-style = bar
+cursor-style-blink = false
+
+# Mouse
+mouse-hide-while-typing = true
+
+# Shell integration
+shell-integration = detect
+shell-integration-features = cursor,sudo,title
+
+# Reuse working directory for new tabs/windows
+window-inherit-working-directory = true
+
+# Keybindings
+keybind = super+t=new_tab
+keybind = super+w=close_surface
+# Tmux session manager (like iTerm2 window arranger)
+keybind = super+shift+t=open_config
+
+# ============================================================================
+# Colors — migrated from iTerm2 Default profile
+# Supports automatic light/dark switching
+# ============================================================================
+
+theme = light:iterm2-light,dark:iterm2-dark

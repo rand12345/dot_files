@@ -116,6 +116,17 @@ if [ -d "$HOME/.oh-my-zsh/custom/themes" ]; then
     create_symlink "$DOTFILES_DIR/zsh/themes/custom.zsh-theme" "$HOME/.oh-my-zsh/custom/themes/custom.zsh-theme"
 fi
 
+# Install Ghostty configuration (macOS only)
+if [[ "$OS" == "macos" ]]; then
+    echo -e "\n${YELLOW}Installing Ghostty configuration...${NC}"
+    mkdir -p "$HOME/.config/ghostty/themes"
+    create_symlink "$DOTFILES_DIR/config/ghostty/config" "$HOME/.config/ghostty/config"
+    for theme_file in "$DOTFILES_DIR/config/ghostty/themes/"*; do
+        theme_name=$(basename "$theme_file")
+        create_symlink "$theme_file" "$HOME/.config/ghostty/themes/$theme_name"
+    done
+fi
+
 # Install Rust (opt-in via INSTALL_RUST=1)
 if [[ "${INSTALL_RUST:-0}" == "1" ]]; then
     if ! command -v cargo &> /dev/null; then

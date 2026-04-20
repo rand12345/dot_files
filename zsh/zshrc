@@ -17,7 +17,7 @@ ZSH_THEME="robbyrussell"
 
 # Oh My Zsh settings
 ENABLE_CORRECTION="true"
-HIST_STAMPS="yyyy/mm/dd"
+HIST_STAMPS="yyyy-mm-dd"
 DISABLE_UNTRACKED_FILES_DIRTY="true"
 
 # Core plugins (work on all platforms)
@@ -129,6 +129,52 @@ fi
 
 # 24-bit colour support (required for Claude Code TUI and modern terminal apps)
 export COLORTERM=truecolor
+
+# ============================================================================
+# SSH — use a generic TERM so remote hosts don't need ghostty terminfo
+# ============================================================================
+
+function ssh() {
+    TERM=xterm-256color command ssh "$@"
+}
+
+# ============================================================================
+# Tmux session manager (iTerm2-style window arranger replacement)
+# Usage: `tm` to fuzzy-pick or create a tmux session
+# ============================================================================
+
+function tm() {
+    local sessions
+    sessions=$(tmux list-sessions -F "#{session_name}" 2>/dev/null)
+
+    if ! command -v fzf &>/dev/null; then
+        echo "fzf not found; run: brew install fzf"
+        return 1
+    fi
+
+    local selected
+    selected=$(
+        {
+            echo "$sessions"
+            echo "[new session]"
+        } | fzf --prompt="tmux> " --height=40% --reverse --border \
+              --preview 'tmux list-windows -t {} 2>/dev/null || echo "(new)"' \
+              --preview-window=right:50%
+    )
+
+    [[ -z "$selected" ]] && return 0
+
+    if [[ "$selected" == "[new session]" ]]; then
+        local name
+        read "name?Session name: "
+        [[ -z "$name" ]] && name="main"
+        tmux new-session -s "$name"
+    elif [[ -n "$TMUX" ]]; then
+        tmux switch-client -t "$selected"
+    else
+        tmux attach-session -t "$selected"
+    fi
+}
 
 # History — larger size and deduplication improve Claude's shell-history context
 HISTSIZE=50000
