@@ -79,6 +79,18 @@ if [[ "$OS" == "macos" ]]; then
     echo -e "\n${YELLOW}Installing common tools via Homebrew...${NC}"
     brew install git tmux neovim ripgrep fd
 
+    # Rust is required on macOS for Neovim tooling
+    echo -e "\n${YELLOW}Installing Rust toolchain...${NC}"
+    if ! command -v cargo &> /dev/null; then
+        curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --no-modify-path
+        source "$HOME/.cargo/env"
+        echo -e "${GREEN}✓${NC} Rust installed"
+    else
+        echo -e "${GREEN}✓${NC} Rust already installed"
+    fi
+    rustup component add rust-analyzer 2>/dev/null || true
+    echo -e "${GREEN}✓${NC} rust-analyzer component ensured"
+
 elif [[ "$OS" == "linux" ]]; then
     echo -e "\n${YELLOW}Installing common tools...${NC}"
     sudo apt-get update --allow-releaseinfo-change -o Acquire::AllowInsecureRepositories=false 2>&1 \
@@ -128,18 +140,19 @@ if [[ "$OS" == "macos" ]]; then
     done
 fi
 
-# Install Rust (opt-in via INSTALL_RUST=1)
-if [[ "${INSTALL_RUST:-0}" == "1" ]]; then
+# Install Rust on Linux (opt-in via INSTALL_RUST=1; macOS installs unconditionally above)
+if [[ "$OS" == "linux" && "${INSTALL_RUST:-0}" == "1" ]]; then
     if ! command -v cargo &> /dev/null; then
         echo -e "\n${YELLOW}Installing Rust...${NC}"
-        curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+        curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --no-modify-path
         source "$HOME/.cargo/env"
+        rustup component add rust-analyzer 2>/dev/null || true
         echo -e "${GREEN}✓${NC} Rust installed"
     else
         echo -e "${GREEN}✓${NC} Rust already installed"
     fi
-else
-    echo -e "${GREEN}✓${NC} Skipping Rust (set INSTALL_RUST=1 to enable)"
+elif [[ "$OS" == "linux" ]]; then
+    echo -e "${GREEN}✓${NC} Skipping Rust on Linux (set INSTALL_RUST=1 to enable)"
 fi
 
 # Set ZSH as default shell
