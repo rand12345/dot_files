@@ -9,8 +9,8 @@ GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 NC='\033[0m'
 
-DOTFILES_REPO="${DOTFILES_REPO:-https://github.com/yourusername/dotfiles.git}"
-DOTFILES_DIR="$HOME/dotfiles"
+DOTFILES_REPO="${DOTFILES_REPO:-https://github.com/rand12345/dot_files.git}"
+DOTFILES_DIR="${DOTFILES_DIR:-$HOME/dot_files}"
 
 echo -e "${GREEN}=== Dotfiles Bootstrap ===${NC}\n"
 
