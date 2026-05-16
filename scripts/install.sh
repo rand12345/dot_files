@@ -81,8 +81,9 @@ if [[ "$OS" == "macos" ]]; then
 
 elif [[ "$OS" == "linux" ]]; then
     echo -e "\n${YELLOW}Installing common tools...${NC}"
-    sudo apt update
-    sudo apt install -y git tmux neovim ripgrep fd-find build-essential curl
+    sudo apt-get update --allow-releaseinfo-change -o Acquire::AllowInsecureRepositories=false 2>&1 \
+        | grep -v '^N:' || true
+    sudo apt-get install -y git tmux neovim ripgrep fd-find build-essential curl
 fi
 
 # Create necessary directories
