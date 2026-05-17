@@ -48,10 +48,15 @@ require("lazy").setup({
   },
   {
     'SuperBo/fugit2.nvim',
-    opts = {
-      width = 100,
-      libgit2_path = '/opt/homebrew/lib/',
-    },
+    opts = function()
+      local libgit2
+      if vim.fn.has("mac") == 1 then
+        libgit2 = "/opt/homebrew/lib/libgit2.dylib"
+      else
+        libgit2 = vim.fn.system("pkg-config --variable=libdir libgit2"):gsub("%s+$", "") .. "/libgit2.so"
+      end
+      return { width = 100, libgit2_path = libgit2 }
+    end,
     dependencies = {
       'MunifTanjim/nui.nvim',
       'nvim-tree/nvim-web-devicons',

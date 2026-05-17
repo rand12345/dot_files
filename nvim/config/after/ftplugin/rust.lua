@@ -5,6 +5,9 @@ vim.keymap.set("n", "<Leader>a", function() vim.cmd.RustLsp("codeAction") end, {
 vim.keymap.set("n", "<Leader>d", function() vim.cmd.RustLsp("debuggables") end, { buffer = bufnr, desc = "Rust debuggables" })
 vim.keymap.set("n", "<Leader>r", function() vim.cmd.RustLsp("runnables") end, { buffer = bufnr, desc = "Rust runnables" })
 
+-- Explicitly override <space>f so it always uses LSP format, not rust.vim
+vim.keymap.set("n", "<space>f", function() vim.lsp.buf.format({ async = false }) end, { buffer = bufnr, desc = "Format (rustfmt)" })
+
 vim.api.nvim_create_autocmd("BufWritePre", {
   buffer = bufnr,
   callback = function() vim.lsp.buf.format({ async = false }) end,
