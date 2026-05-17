@@ -1,5 +1,21 @@
 require("lazy").setup({
-  { "catppuccin/nvim", name = "catppuccin", priority = 1000 },
+  {
+    "catppuccin/nvim",
+    name = "catppuccin",
+    priority = 1000,
+    config = function()
+      require("catppuccin").setup({
+        flavour = "mocha",
+        transparent_background = true,
+        styles = {
+          comments = { "italic" },
+        },
+      })
+      vim.o.termguicolors = true
+      vim.o.background = "dark"
+      vim.cmd.colorscheme("catppuccin")
+    end,
+  },
   "tpope/vim-commentary",
   "mattn/emmet-vim",
   "nvim-tree/nvim-tree.lua",
