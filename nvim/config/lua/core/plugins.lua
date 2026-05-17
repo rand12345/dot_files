@@ -21,6 +21,7 @@ require("lazy").setup({
       require('lsp_lines').setup()
     end,
   },
+  "mfussenegger/nvim-dap",
   {
     'mrcjkb/rustaceanvim',
     version = '^4',
