@@ -40,8 +40,11 @@ require("lazy").setup({
   "mfussenegger/nvim-dap",
   {
     'mrcjkb/rustaceanvim',
-    version = '^4',
+    version = '^9',
     lazy = false,
+    init = function()
+      vim.g.rustfmt_autosave = 0
+    end,
   },
   {
     'SuperBo/fugit2.nvim',
