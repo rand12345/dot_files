@@ -7,14 +7,10 @@ vim.keymap.set('n', '<C-l>', ':wincmd l<CR>', { desc = 'Move to window right' })
 -- General
 vim.keymap.set('n', '<Space>h', ':nohlsearch<CR>', { desc = 'Clear search highlight' })
 
--- Rust LSP
-vim.keymap.set('n', '<Space>a', ':RustLsp codeAction<CR>', { desc = 'Rust code actions' })
-vim.keymap.set('n', '<Space>f', ':RustFmt<CR>', { desc = 'Format Rust file' })
-vim.keymap.set('n', '<Space>e', ':RustLsp explainError<CR>', { desc = 'Explain Rust error' })
-vim.keymap.set('n', '<Space>ha', ':RustLsp hover actions<CR>', { desc = 'Rust hover actions' })
-vim.keymap.set('n', 'gd', ':RustLsp definition<CR>', { desc = 'Go to definition' })
-vim.keymap.set('n', 'gr', ':RustLsp references<CR>', { desc = 'Show references' })
-vim.keymap.set('n', '<Space>r', ':RustLsp runnables<CR>', { desc = 'Run Rust code' })
+-- Rust LSP (buffer-local overrides live in after/ftplugin/rust.lua)
+vim.keymap.set('n', '<Space>f', function() vim.lsp.buf.format({ async = false }) end, { desc = 'Format file' })
+vim.keymap.set('n', 'gd', vim.lsp.buf.definition, { desc = 'Go to definition' })
+vim.keymap.set('n', 'gr', vim.lsp.buf.references, { desc = 'Show references' })
 
 -- Testing
 vim.keymap.set('n', '<Space>t', ':TestNearest<CR>', { desc = 'Run nearest test' })
