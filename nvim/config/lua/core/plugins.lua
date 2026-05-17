@@ -24,6 +24,11 @@ require("lazy").setup({
   "dracula/vim",
   "nvim-lualine/lualine.nvim",
   "nvim-treesitter/nvim-treesitter",
+  {
+    'MeanderingProgrammer/render-markdown.nvim',
+    dependencies = { 'nvim-treesitter/nvim-treesitter', 'nvim-tree/nvim-web-devicons' },
+    opts = {},
+  },
   "vim-test/vim-test",
   "lewis6991/gitsigns.nvim",
   "preservim/vimux",
