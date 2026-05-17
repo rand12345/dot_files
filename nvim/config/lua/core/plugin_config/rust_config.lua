@@ -1,3 +1,7 @@
+-- Disable built-in rust.vim format-on-save; we use LSP (rustaceanvim) instead
+vim.g.rustfmt_autosave = 0
+vim.g.rustfmt_command = nil
+
 local ok, mason_registry = pcall(require, "mason-registry")
 
 local adapter
