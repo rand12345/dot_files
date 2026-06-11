@@ -18,7 +18,17 @@ require("lazy").setup({
   },
   {
     "numToStr/Comment.nvim",
-    opts = {},
+    opts = function()
+      return {
+        pre_hook = function(ctx)
+          local ok, cstr = pcall(require("Comment.ft").calculate, ctx)
+          if ok and cstr then
+            return cstr
+          end
+          return vim.bo.commentstring
+        end,
+      }
+    end,
   },
   "mattn/emmet-vim",
   "nvim-tree/nvim-tree.lua",
