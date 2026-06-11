@@ -16,7 +16,10 @@ require("lazy").setup({
       vim.cmd.colorscheme("catppuccin")
     end,
   },
-  "tpope/vim-commentary",
+  {
+    "numToStr/Comment.nvim",
+    opts = {},
+  },
   "mattn/emmet-vim",
   "nvim-tree/nvim-tree.lua",
   "nvim-tree/nvim-web-devicons",
