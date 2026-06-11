@@ -2,17 +2,10 @@ require("mason-lspconfig").setup({
   ensure_installed = { "lua_ls" }
 })
 
-local lspconfig = require('lspconfig')
+local capabilities = require("cmp_nvim_lsp").default_capabilities()
 
-local lsp_defaults = lspconfig.util.default_config
-
-lsp_defaults.capabilities = vim.tbl_deep_extend(
-  'force',
-  lsp_defaults.capabilities,
-  require('cmp_nvim_lsp').default_capabilities()
-)
-
-require("lspconfig").lua_ls.setup {
+vim.lsp.config("lua_ls", {
+  capabilities = capabilities,
   settings = {
     Lua = {
       diagnostics = {
@@ -25,13 +18,22 @@ require("lspconfig").lua_ls.setup {
         },
       },
     },
-  }
-}
+  },
+})
 
-require("lspconfig").solargraph.setup({})
-require("lspconfig").ts_ls.setup({})
-require("lspconfig").gopls.setup({})
-require("lspconfig").tailwindcss.setup({})
+for _, server in ipairs({ "solargraph", "ts_ls", "gopls", "tailwindcss" }) do
+  vim.lsp.config(server, {
+    capabilities = capabilities,
+  })
+end
+
+vim.lsp.enable({
+  "lua_ls",
+  "solargraph",
+  "ts_ls",
+  "gopls",
+  "tailwindcss",
+})
 
 vim.api.nvim_create_autocmd('LspAttach', {
   group = vim.api.nvim_create_augroup('UserLspConfig', {}),

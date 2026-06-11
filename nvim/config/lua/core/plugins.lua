@@ -28,13 +28,26 @@ require("lazy").setup({
   "nvim-lualine/lualine.nvim",
   {
     "nvim-treesitter/nvim-treesitter",
+    branch = "master",
     lazy = false,
-    build = ":TSUpdate",
+    build = function()
+      require("nvim-treesitter.install").update({ with_sync = true })({
+        "c",
+        "lua",
+        "rust",
+        "ruby",
+        "vim",
+        "html",
+      })
+    end,
     config = function()
+      local parser_dir = vim.fn.stdpath("cache") .. "/treesitter"
+      vim.opt.runtimepath:append(parser_dir)
+
       require("nvim-treesitter.configs").setup({
-        ensure_installed = { "c", "lua", "rust", "ruby", "vim", "html" },
-        sync_install = true,
-        auto_install = true,
+        sync_install = false,
+        auto_install = false,
+        parser_install_dir = parser_dir,
         highlight = {
           enable = true,
         },
