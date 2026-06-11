@@ -12,6 +12,14 @@ if not vim.keymap or not vim.keymap.set then
     end
   end
 
+  _G.__codex_keymap_expr = function(id)
+    local callback = keymap_callbacks[id]
+    if callback then
+      return callback()
+    end
+    return ""
+  end
+
   vim.keymap = vim.keymap or {}
   vim.keymap.set = function(mode, lhs, rhs, opts)
     opts = opts or {}
@@ -29,7 +37,13 @@ if not vim.keymap or not vim.keymap.set then
       if type(rhs) == 'function' then
         next_keymap_callback_id = next_keymap_callback_id + 1
         keymap_callbacks[next_keymap_callback_id] = rhs
-        map_rhs = string.format(':lua __codex_keymap_run(%d)<CR>', next_keymap_callback_id)
+        if opts.expr then
+          map_rhs = string.format('v:lua.__codex_keymap_expr(%d)', next_keymap_callback_id)
+        else
+          map_rhs = string.format(':lua __codex_keymap_run(%d)<CR>', next_keymap_callback_id)
+        end
+      elseif type(rhs) == 'string' then
+        map_rhs = rhs:gsub('<CMD>', ':<C-u>'):gsub('<cmd>', ':<C-u>')
       end
 
       if opts.buffer then
