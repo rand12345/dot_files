@@ -220,3 +220,4 @@ fi
 if [[ -f "$HOME/.zshrc.local" ]]; then
     source "$HOME/.zshrc.local"
 fi
+export PATH="/Users/dgau/bin:$PATH"

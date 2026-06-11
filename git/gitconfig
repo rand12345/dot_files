@@ -90,3 +90,6 @@
 
 [help]
 	autocorrect = 1
+[user]
+	name = rand12345
+	email = none@none.com
