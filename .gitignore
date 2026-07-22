@@ -25,4 +25,3 @@ Thumbs.db
 
 # Neovim plugin data
 nvim/config/plugin/
-nvim/config/lazy-lock.json
