@@ -38,32 +38,43 @@ require("lazy").setup({
   "nvim-lualine/lualine.nvim",
   {
     "nvim-treesitter/nvim-treesitter",
-    branch = "master",
+    branch = "main",
     lazy = false,
     build = function()
-      require("nvim-treesitter.install").update({ with_sync = true })({
-        "c",
-        "lua",
-        "rust",
-        "ruby",
-        "vim",
-        "html",
-      })
+      if vim.fn.executable("tree-sitter") == 1 then
+        vim.cmd("TSUpdate")
+      end
     end,
     config = function()
-      local parser_dir = vim.fn.stdpath("cache") .. "/treesitter"
-      vim.opt.runtimepath:append(parser_dir)
+      local languages = {
+        "c",
+        "html",
+        "lua",
+        "markdown",
+        "markdown_inline",
+        "ruby",
+        "rust",
+        "vim",
+        "vimdoc",
+      }
 
-      require("nvim-treesitter.configs").setup({
-        sync_install = false,
-        auto_install = false,
-        parser_install_dir = parser_dir,
-        highlight = {
-          enable = true,
-        },
-        indent = {
-          enable = true,
-        },
+      require("nvim-treesitter").setup({
+        install_dir = vim.fn.stdpath("data") .. "/site",
+      })
+
+      -- The main branch is the supported nvim-treesitter implementation for
+      -- Neovim 0.12. Keep its parsers in the normal site directory; loading
+      -- the former cache directory can select stale, incompatible parsers.
+      if vim.fn.executable("tree-sitter") == 1 then
+        require("nvim-treesitter").install(languages)
+      end
+
+      vim.api.nvim_create_autocmd("FileType", {
+        group = vim.api.nvim_create_augroup("UserTreesitter", { clear = true }),
+        pattern = languages,
+        callback = function(args)
+          pcall(vim.treesitter.start, args.buf)
+        end,
       })
     end,
   },
